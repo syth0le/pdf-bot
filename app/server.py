@@ -2,6 +2,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from app.config import BotConfig
+from app.pdf import pdf_main
 
 bot = Bot(token=BotConfig.API_TOKEN)
 storage = MemoryStorage()
@@ -17,21 +18,18 @@ async def send_welcome(message: types.Message):
 
 
 @dp.message_handler(commands=['pdf'])
-async def send_welcome(message: types.Message):
+async def get_request_for_pdf(message: types.Message):
     await message.answer('send your files:')
 
 
 @dp.message_handler(content_types=['photo'])
 async def handle_docs_photo(message):
     photo = message.photo.pop()
-    await photo.download(photo['file_id'], destination='images')
-    # rez = []
-    # i = 0
-    # for item in message.photo:
-    #     temp = f'{random.uniform(1, 100000)}'
-    #     # item.download(temp, destination='images')
-    #     i += 1
-    #     print(i, item)
-    #     rez.append(item['file_id'])
+    custom_path = f"static/images/{photo['file_id'][:30]}.jpg"  # use timestamp
+    await photo.download(custom_path)
 
-    # await message.answer(i)
+
+@dp.message_handler(commands=['test'])
+async def send_pdf(message: types.Message):
+    name = pdf_main()
+    await bot.send_document(message.chat.id, open(name, 'rb'))
