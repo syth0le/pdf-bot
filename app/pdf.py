@@ -1,4 +1,5 @@
 import glob
+import os
 
 from PIL import Image
 from fpdf import FPDF
@@ -13,7 +14,7 @@ def pdf_main():
     for image in imagelist:
         pdf.add_page()
         pdf.image(image, w=190, h=280)
-        print(pdf)
+        os.remove(image)
     pdf.output("/coding/pdf-bot/static/pdf/yourfile.pdf", "F")
     return "/coding/pdf-bot/static/pdf/yourfile.pdf"
 
