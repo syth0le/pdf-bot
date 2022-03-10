@@ -1,20 +1,23 @@
 import glob
 import os
+from datetime import datetime
 
-from fpdf import FPDF
+from PIL import Image
 
 
-def pdf_main() -> str:
-    pdf = FPDF()
-    pdf.set_auto_page_break(0)
-
-    imagelist = glob.glob('/coding/pdf-bot/static/images/*.jpg')
-    if not imagelist:
+def get_pdf(chat_id: int) -> str:
+    images = glob.glob(f'/coding/pdf-bot/static/images/{chat_id}/*.jpg')
+    if not images:
         return "There're no pictures to convert"
 
-    for image in imagelist:
-        pdf.add_page()
-        pdf.image(image, w=190, h=280)
+    image_list = []
+    for image in images:
+        img = Image.open(image).convert('RGB')
+        image_list.append(img)
         os.remove(image)
-    pdf.output("/coding/pdf-bot/static/pdf/yourfile.pdf", "F")
-    return "/coding/pdf-bot/static/pdf/yourfile.pdf"
+
+    time_for_pdf = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    pdf_path = f'/coding/pdf-bot/static/pdf/{chat_id}-{time_for_pdf}.pdf'
+    image_list[0].save(pdf_path, save_all=True,
+                       append_images=image_list[1:])
+    return pdf_path

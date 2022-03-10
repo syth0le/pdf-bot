@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
+from app import constants
 from app.config import BotConfig
 from app.middleware import AccessMiddleware
-from app.pdf import pdf_main
+from app.pdf import get_pdf
 
 bot = Bot(token=BotConfig.API_TOKEN)
 storage = MemoryStorage()
@@ -12,26 +15,32 @@ dp = Dispatcher(bot, storage=storage)
 dp.middleware.setup(middleware=AccessMiddleware(BotConfig.ACCESS_ID))
 
 
-@dp.message_handler(commands=['start', 'help', 'menu'])
+@dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
-    await message.answer('hello')
+    await message.answer(constants.WELCOME)
 
 
-@dp.message_handler(commands=['pdf'])
-async def get_request_for_pdf(message: types.Message):
-    await message.answer('send your files:')
+@dp.message_handler(commands=['help'])
+async def send_help_information(message: types.Message):
+    await message.answer(constants.HELP_INFORMATION)
+
+
+@dp.message_handler(commands=['commands'])
+async def send_commands(message: types.Message):
+    await message.answer(constants.COMMANDS)
 
 
 @dp.message_handler(content_types=['photo'])
 async def handle_docs_photo(message):
     photo = message.photo.pop()
-    custom_path = f"static/images/{photo['file_id'][:30]}.jpg"  # use timestamp
+    time_for_image = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    custom_path = f"static/images/{message.chat.id}/{message.chat.id}-{time_for_image}-{photo['file_id'][:30]}.jpg"
     await photo.download(custom_path)
 
 
-@dp.message_handler(commands=['test'])
+@dp.message_handler(commands=['conv2pdf'])
 async def send_pdf(message: types.Message):
-    name = pdf_main()
+    name = get_pdf(chat_id=message.chat.id)
     try:
         await bot.send_document(message.chat.id, open(name, 'rb'))
     except FileNotFoundError:
