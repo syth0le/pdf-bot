@@ -36,6 +36,8 @@ async def handle_docs_photo(message):
     photo = message.photo.pop()
     time_for_image = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     custom_path = f"static/images/{message.chat.id}/{message.chat.id}-{time_for_image}-{photo['file_id'][:30]}.jpg"
+    print(custom_path)
+    print(photo.download(custom_path)[1])
     await photo.download(custom_path)
 
 
