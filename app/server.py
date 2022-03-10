@@ -33,12 +33,11 @@ async def send_commands(message: types.Message):
 
 @dp.message_handler(content_types=['photo'])
 async def handle_docs_photo(message):
-    photo = message.photo.pop()
-    time_for_image = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    custom_path = f"static/images/{message.chat.id}/{message.chat.id}-{time_for_image}-{photo['file_id'][:30]}.jpg"
-    print(custom_path)
-    print(photo.download(custom_path))
-    await photo.download(custom_path)
+    if photo := message.photo.pop():
+        time_for_image = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        chat_id = message.chat.id
+        destination_file = f"static/images/{chat_id}/{chat_id}-{time_for_image}-{photo.file_unique_id}.jpg "
+        await photo.download(destination_file=destination_file)
 
 
 @dp.message_handler(commands=['conv2pdf'])
