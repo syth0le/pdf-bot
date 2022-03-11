@@ -39,9 +39,8 @@ async def handle_docs_photo(message):
         destination_file = os.getcwd() + f"/static/images/{chat_id}/{chat_id}-{time_for_image}-{photo.file_unique_id}.jpg"
         print(destination_file)
         await photo.download(destination_file=destination_file)
-        # with open(f"static/images/{chat_id}/{chat_id}-{time_for_image}-{photo.file_unique_id}.jpg", 'wb') as file:
-        #     file.write(b'')
-        #     file.close()
+        with open(destination_file, 'rb') as file:
+            print(file)
 
 
 @dp.message_handler(commands=['conv2pdf'])
