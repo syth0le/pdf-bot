@@ -53,6 +53,5 @@ async def send_pdf(message: types.Message):
     name = get_pdf(chat_id=message.chat.id)
     try:
         await bot.send_document(message.chat.id, open(name, 'rb'))
-        os.remove(name)
     except FileNotFoundError:
         await bot.send_message(message.chat.id, name)
