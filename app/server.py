@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 
-from PIL import Image
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
@@ -40,12 +39,7 @@ async def handle_docs_photo(message):
         time_for_image = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         chat_id = message.chat.id
         destination_file = os.getcwd() + f"/static/images/{chat_id}/{chat_id}-{time_for_image}-{photo.file_unique_id}.jpg"
-        # print(destination_file)
         await photo.download(destination_file=destination_file)
-        with open(destination_file, 'rb') as file:
-            image = Image.open(file).convert('RGB')
-            FILES.append(image)
-        print(FILES)
 
 
 @dp.message_handler(commands=['conv2pdf'])
