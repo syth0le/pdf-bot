@@ -1,6 +1,5 @@
 import glob
 import os
-from datetime import datetime
 
 from PIL import Image
 
@@ -16,8 +15,7 @@ def get_pdf(chat_id: int) -> str:
         image_list.append(img)
         os.remove(image)
 
-    time_for_pdf = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    pdf_path = os.getcwd() + f'/static/pdf/{chat_id}-{time_for_pdf}.pdf'
+    pdf_path = os.getcwd() + f'/pdf/pdf.pdf'
     image_list[0].save(pdf_path, save_all=True,
                        append_images=image_list[1:])
     return pdf_path
